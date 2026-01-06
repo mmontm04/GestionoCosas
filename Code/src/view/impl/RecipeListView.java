@@ -52,5 +52,12 @@ public class RecipeListView extends JFrame {
         }
     }
 
+    public int getIdRecetaSeleccionada() {
+        int fila = tabla.getSelectedRow();
+        if (fila == -1) return -1;
+        // Asumiendo que la columna 0 es el ID (como definimos antes)
+        return (int) modeloTabla.getValueAt(fila, 0); 
+    }
+
     public JButton getBtnNuevo() { return btnNuevo; }
 }

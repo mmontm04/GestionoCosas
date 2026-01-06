@@ -52,6 +52,25 @@ public class ProductDAO implements IProductDAO{
             return false;
         }
     }
+
+    public boolean actualizarStock(int productoId, double cantidadARestar) {
+        String sql = "UPDATE productos SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual >= ?";
+        
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDouble(1, cantidadARestar);
+            pstmt.setInt(2, productoId);
+            pstmt.setDouble(3, cantidadARestar); // Para evitar stock negativo
+            
+            int filas = pstmt.executeUpdate();
+            return filas > 0; // Si devuelve true, es que había stock suficiente y se restó
+            
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar stock: " + e.getMessage());
+            return false;
+        }
+    }
     
     // Aquí añadiremos más adelante: crear, actualizar, eliminar...
 }

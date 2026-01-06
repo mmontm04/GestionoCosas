@@ -83,6 +83,42 @@ public class RecipeDAO implements IRecipeDAO {
         }
     }
 
+    public Recipe getRecetaCompleta(int id) {
+        Recipe r = null;
+        String sqlReceta = "SELECT * FROM recetas WHERE id = ?";
+        String sqlIng = "SELECT ri.cantidad_necesaria, p.id, p.nombre, p.stock_actual, p.precio " +
+                        "FROM receta_ingredientes ri " +
+                        "JOIN productos p ON ri.producto_id = p.id " +
+                        "WHERE ri.receta_id = ?";
+
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement psR = conn.prepareStatement(sqlReceta)) {
+            
+            psR.setInt(1, id);
+            ResultSet rs = psR.executeQuery();
+            
+            if (rs.next()) {
+                r = new Recipe(rs.getInt("id"), rs.getString("nombre"), rs.getString("descripcion"), rs.getDouble("precio_venta"));
+                
+                // Cargar ingredientes
+                try (PreparedStatement psI = conn.prepareStatement(sqlIng)) {
+                    psI.setInt(1, id);
+                    ResultSet rsI = psI.executeQuery();
+                    while (rsI.next()) {
+                        model.entities.Product p = new model.entities.Product(
+                            rsI.getInt("id"), rsI.getString("nombre"), 
+                            rsI.getDouble("stock_actual"), 0, rsI.getDouble("precio")
+                        );
+                        r.addIngrediente(p, rsI.getDouble("cantidad_necesaria"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return r;
+    }
+
     @Override
     public boolean delate(int id) {
         String sql = "DELETE FROM recetas WHERE id = ?";
