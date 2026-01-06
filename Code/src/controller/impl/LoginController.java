@@ -43,6 +43,8 @@ public class LoginController {
         User usuarioEncontrado = userDAO.findByUsername(user);
 
         if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(pass)) {
+            util.SessionController.getInstance().login(usuarioEncontrado);
+
             view.showMessage("¡Bienvenido " + usuarioEncontrado.getRole() + "!");
             
             if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(pass)) {

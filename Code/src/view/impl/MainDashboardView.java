@@ -25,6 +25,22 @@ public class MainDashboardView extends JFrame {
             ProductController pc = new ProductController();
             pc.init();
         });
+
+        JButton btnRecetas = new JButton("Gestión de Recetas");
+        add(btnRecetas);
+
+        btnRecetas.addActionListener(e -> {
+            controller.impl.RecipeController rc = new controller.impl.RecipeController();
+            rc.init();
+        });
+
+        JButton btnUsuarios = new JButton("Administrar Usuarios");
+        add(btnUsuarios);
+
+        btnUsuarios.addActionListener(e -> {
+            controller.impl.UserController uc = new controller.impl.UserController();
+            uc.init();
+        });
         
         // Aquí irían más botones (Recetas, Usuarios...)
     }
