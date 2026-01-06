@@ -1,5 +1,6 @@
 package model.dao;
+import model.entities.User;
 
-public class IUserDAO {
-    
+public interface IUserDAO {
+    User findByUsername(String username);
 }

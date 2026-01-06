@@ -1,4 +1,4 @@
-package controller.imp;
+package controller.impl;
 
 public class ChefController {
     

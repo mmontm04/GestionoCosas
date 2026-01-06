@@ -1,4 +1,4 @@
-package view.imp;
+package view.impl;
 
 public class OrderFormView {
     
