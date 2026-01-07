@@ -1,6 +1,8 @@
 package view.impl;
 
 import model.entities.Product;
+import util.patterns.strategy.IStockViewStrategy;
+import util.patterns.strategy.LowStockHighlightStrategy;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,6 +14,7 @@ public class ProductListView extends JFrame {
     private JButton btnNuevo;
     private JButton btnEditar;
     private JButton btnCerrar;
+    private IStockViewStrategy stockViewStrategy;
 
     public ProductListView() {
         setTitle("Catálogo de Productos");
@@ -23,6 +26,8 @@ public class ProductListView extends JFrame {
         String[] columnas = {"ID", "Nombre", "Stock", "Mínimo", "Precio (€)"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modeloTabla);
+        stockViewStrategy = new LowStockHighlightStrategy();
+        stockViewStrategy.apply(tabla);
         
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
