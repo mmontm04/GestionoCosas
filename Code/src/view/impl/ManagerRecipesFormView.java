@@ -1,6 +1,7 @@
 package view.impl;
 
 import model.entities.Product;
+import model.entities.Recipe;
 import model.entities.RecipeIngredient;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class ManagerRecipesFormView extends JDialog {
     private JComboBox<Product> comboProductos;
     private JTextField txtCantidad;
     private JButton btnAddIngrediente;
+    private JButton btnRemoveIngrediente;
     private JTable tablaIngredientes;
     private DefaultTableModel modeloTablaIng;
     
@@ -62,12 +64,14 @@ public class ManagerRecipesFormView extends JDialog {
         comboProductos = new JComboBox<>(productosDisponibles.toArray(new Product[0]));
         txtCantidad = new JTextField("1", 5);
         btnAddIngrediente = new JButton("Añadir (+)");
+        btnRemoveIngrediente = new JButton("Quitar (-)");
         
         panelSelector.add(new JLabel("Producto:"));
         panelSelector.add(comboProductos);
         panelSelector.add(new JLabel("Cant:"));
         panelSelector.add(txtCantidad);
         panelSelector.add(btnAddIngrediente);
+        panelSelector.add(btnRemoveIngrediente);
         
         panelIngredientes.add(panelSelector, BorderLayout.NORTH);
 
@@ -85,6 +89,7 @@ public class ManagerRecipesFormView extends JDialog {
 
         // --- LÓGICA INTERNA VISUAL ---
         btnAddIngrediente.addActionListener(e -> agregarIngredienteVisual());
+        btnRemoveIngrediente.addActionListener(e -> quitarIngredienteVisual());
     }
 
     private void agregarIngredienteVisual() {
@@ -103,6 +108,34 @@ public class ManagerRecipesFormView extends JDialog {
         }
     }
 
+    private void quitarIngredienteVisual() {
+        int fila = tablaIngredientes.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un ingrediente para quitar");
+            return;
+        }
+
+        ingredientesTemporales.remove(fila);
+        modeloTablaIng.removeRow(fila);
+    }
+
+    public void setReceta(Recipe receta) {
+        setTitle("Editar Receta Completa");
+        txtNombre.setText(receta.getNombre());
+        txtDescripcion.setText(receta.getDescripcion());
+        txtPrecio.setText(String.valueOf(receta.getPrecioVenta()));
+
+        ingredientesTemporales.clear();
+        modeloTablaIng.setRowCount(0);
+        for (RecipeIngredient ingrediente : receta.getIngredientes()) {
+            ingredientesTemporales.add(ingrediente);
+            modeloTablaIng.addRow(new Object[]{
+                ingrediente.getProducto().getNombre(),
+                ingrediente.getCantidad()
+            });
+        }
+    }
+
     // Getters
     public String getNombre() { return txtNombre.getText(); }
     public String getDescripcion() { return txtDescripcion.getText(); }
@@ -111,5 +144,9 @@ public class ManagerRecipesFormView extends JDialog {
 
     public void addGuardarListener(ActionListener l) {
         btnGuardar.addActionListener(l);
+    }
+
+    public void setGuardarButtonText(String text) {
+        btnGuardar.setText(text);
     }
 }

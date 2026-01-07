@@ -5,6 +5,7 @@ import model.entities.Product;
 import view.impl.ProductFormView;
 import view.impl.ProductListView;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class ProductController {
     private ProductListView listView;
@@ -17,11 +18,38 @@ public class ProductController {
         // Escuchar el botón "Nuevo" de la lista
         this.listView.getBtnNuevo().addActionListener(e -> abrirFormularioCrear());
         this.listView.getBtnEditar().addActionListener(e -> abrirFormularioEditar());
+        this.listView.getBtnEliminar().addActionListener(e -> eliminarProductoSeleccionado());
     }
 
     public void init() {
         cargarDatos();
         listView.setVisible(true);
+    }
+
+    private void eliminarProductoSeleccionado() {
+        Integer productoId = listView.getProductoSeleccionadoId();
+        if (productoId == null) {
+            listView.showMessage("Selecciona un producto para eliminar.");
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+            listView,
+            "¿Seguro que deseas eliminar el producto seleccionado?",
+            "Confirmar eliminación",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        if (dao.eliminar(productoId)) {
+            listView.showMessage("Producto eliminado.");
+            cargarDatos();
+        } else {
+            listView.showMessage("No se pudo eliminar el producto.");
+        }
     }
 
     private void cargarDatos() {

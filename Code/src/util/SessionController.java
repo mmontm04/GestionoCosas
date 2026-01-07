@@ -2,9 +2,12 @@ package util;
 
 import model.entities.User;
 
+import util.LoginAuditLogger;
+
 public class SessionController {
     private static SessionController instance;
     private User usuarioLogueado;
+    private final LoginAuditLogger loginAuditLogger = new LoginAuditLogger();
 
     private SessionController() {}
 
@@ -17,6 +20,7 @@ public class SessionController {
 
     public void login(User user) {
         this.usuarioLogueado = user;
+        loginAuditLogger.logLogin(user);
     }
 
     public void logout() {

@@ -10,6 +10,8 @@ public class RecipeListView extends JFrame {
     private JTable tabla;
     private DefaultTableModel modeloTabla;
     private JButton btnNuevo;
+    private JButton btnEditar;
+    private JButton btnEliminar;
     private JButton btnCerrar;
 
     public RecipeListView() {
@@ -27,9 +29,13 @@ public class RecipeListView extends JFrame {
         // Botones
         JPanel panel = new JPanel();
         btnNuevo = new JButton("Nueva Receta");
+        btnEditar = new JButton("Editar Receta");
+        btnEliminar = new JButton("Eliminar Receta");
         btnCerrar = new JButton("Cerrar");
         
         panel.add(btnNuevo);
+        panel.add(btnEditar);
+        panel.add(btnEliminar);
         panel.add(btnCerrar);
         add(panel, BorderLayout.SOUTH);
 
@@ -39,7 +45,8 @@ public class RecipeListView extends JFrame {
     public void configurarSeguridad(boolean esGerente) {
         if (!esGerente) {
             btnNuevo.setVisible(false); 
-            // btnEliminar.setVisible(false); // Si tuvieras botón eliminar
+            btnEditar.setVisible(false);
+            btnEliminar.setVisible(false);
         }
     }
     
@@ -60,4 +67,6 @@ public class RecipeListView extends JFrame {
     }
 
     public JButton getBtnNuevo() { return btnNuevo; }
+    public JButton getBtnEditar() { return btnEditar; }
+    public JButton getBtnEliminar() { return btnEliminar; }
 }

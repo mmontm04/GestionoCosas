@@ -8,8 +8,7 @@ public interface IProductDAO {
     List<Product> listarTodos();
     boolean guardar(Product p);
     boolean actualizar(Product p);
-    
-    // Métodos futuros (puedes dejarlos comentados o declararlos ya)
-    // boolean eliminar(int id);
+
+    boolean eliminar(int id);
     // Producto buscarPorId(int id);
 }

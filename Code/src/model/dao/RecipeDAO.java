@@ -83,6 +83,55 @@ public class RecipeDAO implements IRecipeDAO {
         }
     }
 
+    @Override
+    public boolean update(Recipe r) {
+        String sqlReceta = "UPDATE recetas SET nombre = ?, descripcion = ?, precio_venta = ? WHERE id = ?";
+        String sqlDeleteIngredientes = "DELETE FROM receta_ingredientes WHERE receta_id = ?";
+        String sqlIngrediente = "INSERT INTO receta_ingredientes (receta_id, producto_id, cantidad_necesaria) VALUES (?, ?, ?)";
+
+        Connection conn = null;
+        try {
+            conn = DbConnection.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psReceta = conn.prepareStatement(sqlReceta)) {
+                psReceta.setString(1, r.getNombre());
+                psReceta.setString(2, r.getDescripcion());
+                psReceta.setDouble(3, r.getPrecioVenta());
+                psReceta.setInt(4, r.getId());
+                psReceta.executeUpdate();
+            }
+
+            try (PreparedStatement psDelete = conn.prepareStatement(sqlDeleteIngredientes)) {
+                psDelete.setInt(1, r.getId());
+                psDelete.executeUpdate();
+            }
+
+            try (PreparedStatement psIngrediente = conn.prepareStatement(sqlIngrediente)) {
+                for (RecipeIngredient item : r.getIngredientes()) {
+                    psIngrediente.setInt(1, r.getId());
+                    psIngrediente.setInt(2, item.getProducto().getId());
+                    psIngrediente.setDouble(3, item.getCantidad());
+                    psIngrediente.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar receta: " + e.getMessage());
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+        }
+    }
+
+    @Override
     public Recipe getRecetaCompleta(int id) {
         Recipe r = null;
         String sqlReceta = "SELECT * FROM recetas WHERE id = ?";
@@ -120,17 +169,36 @@ public class RecipeDAO implements IRecipeDAO {
     }
 
     @Override
-    public boolean delate(int id) {
-        String sql = "DELETE FROM recetas WHERE id = ?";
-        try (Connection conn = DbConnection.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
-            
+    public boolean delete(int id) {
+        String sqlDeleteIngredientes = "DELETE FROM receta_ingredientes WHERE receta_id = ?";
+        String sqlDeleteReceta = "DELETE FROM recetas WHERE id = ?";
+
+        Connection conn = null;
+        try {
+            conn = DbConnection.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psIngredientes = conn.prepareStatement(sqlDeleteIngredientes)) {
+                psIngredientes.setInt(1, id);
+                psIngredientes.executeUpdate();
+            }
+
+            try (PreparedStatement psReceta = conn.prepareStatement(sqlDeleteReceta)) {
+                psReceta.setInt(1, id);
+                int filas = psReceta.executeUpdate();
+                conn.commit();
+                return filas > 0;
+            }
         } catch (SQLException e) {
             System.err.println("Error al eliminar receta: " + e.getMessage());
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 }

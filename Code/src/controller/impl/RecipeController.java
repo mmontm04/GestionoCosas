@@ -20,6 +20,8 @@ public class RecipeController {
         
         // Evento botón nuevo
         this.view.getBtnNuevo().addActionListener(e -> mostrarFormulario());
+        this.view.getBtnEditar().addActionListener(e -> editarRecetaSeleccionada());
+        this.view.getBtnEliminar().addActionListener(e -> eliminarRecetaSeleccionada());
     }
 
     public void init() {
@@ -76,5 +78,86 @@ public class RecipeController {
         });
         
         form.setVisible(true);
+    }
+
+    private void editarRecetaSeleccionada() {
+        if (!SessionController.getInstance().esGerente()) {
+            return;
+        }
+
+        int recetaId = view.getIdRecetaSeleccionada();
+        if (recetaId == -1) {
+            JOptionPane.showMessageDialog(view, "Selecciona una receta para editar.");
+            return;
+        }
+
+        Recipe receta = dao.getRecetaCompleta(recetaId);
+        if (receta == null) {
+            JOptionPane.showMessageDialog(view, "No se pudo cargar la receta seleccionada.");
+            return;
+        }
+
+        model.dao.ProductDAO prodDao = new model.dao.ProductDAO();
+        List<model.entities.Product> listaProductos = prodDao.listarTodos();
+
+        ManagerRecipesFormView form = new ManagerRecipesFormView(view, listaProductos);
+        form.setReceta(receta);
+        form.setGuardarButtonText("ACTUALIZAR RECETA");
+
+        form.addGuardarListener(e -> {
+            try {
+                Recipe actualizada = new Recipe();
+                actualizada.setId(recetaId);
+                actualizada.setNombre(form.getNombre());
+                actualizada.setDescripcion(form.getDescripcion());
+                actualizada.setPrecioVenta(Double.parseDouble(form.getPrecio()));
+
+                for (model.entities.RecipeIngredient ri : form.getIngredientesSeleccionados()) {
+                    actualizada.addIngrediente(ri.getProducto(), ri.getCantidad());
+                }
+
+                if (dao.update(actualizada)) {
+                    JOptionPane.showMessageDialog(form, "¡Receta actualizada!");
+                    form.dispose();
+                    cargarDatos();
+                } else {
+                    JOptionPane.showMessageDialog(form, "Error al actualizar la receta.");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(form, "Error en los datos: " + ex.getMessage());
+            }
+        });
+
+        form.setVisible(true);
+    }
+
+    private void eliminarRecetaSeleccionada() {
+        if (!SessionController.getInstance().esGerente()) {
+            return;
+        }
+
+        int recetaId = view.getIdRecetaSeleccionada();
+        if (recetaId == -1) {
+            JOptionPane.showMessageDialog(view, "Selecciona una receta para eliminar.");
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+            view,
+            "¿Seguro que deseas eliminar la receta seleccionada?",
+            "Confirmar eliminación",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        if (dao.delete(recetaId)) {
+            JOptionPane.showMessageDialog(view, "Receta eliminada.");
+            cargarDatos();
+        } else {
+            JOptionPane.showMessageDialog(view, "No se pudo eliminar la receta.");
+        }
     }
 }

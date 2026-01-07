@@ -13,6 +13,7 @@ public class ProductListView extends JFrame {
     private DefaultTableModel modeloTabla;
     private JButton btnNuevo;
     private JButton btnEditar;
+    private JButton btnEliminar;
     private JButton btnCerrar;
     private IStockViewStrategy stockViewStrategy;
 
@@ -39,6 +40,9 @@ public class ProductListView extends JFrame {
 
         btnEditar = new JButton("Editar Producto");
         panelBotones.add(btnEditar);
+
+        btnEliminar = new JButton("Eliminar Producto");
+        panelBotones.add(btnEliminar);
         
         btnCerrar = new JButton("Cerrar");
         panelBotones.add(btnCerrar);
@@ -55,6 +59,10 @@ public class ProductListView extends JFrame {
 
     public JButton getBtnEditar() {
         return btnEditar;
+    }
+
+    public JButton getBtnEliminar() {
+        return btnEliminar;
     }
 
     public Integer getProductoSeleccionadoId() {

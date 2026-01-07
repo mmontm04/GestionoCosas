@@ -74,6 +74,22 @@ public class ProductDAO implements IProductDAO{
         }
     }
 
+    @Override
+    public boolean eliminar(int id) {
+        String sql = "DELETE FROM productos WHERE id = ?";
+
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            int filasAfectadas = pstmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar producto: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean actualizarStock(int productoId, double cantidadARestar) {
         String sql = "UPDATE productos SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual >= ?";
         

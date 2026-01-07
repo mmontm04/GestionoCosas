@@ -6,5 +6,7 @@ import java.util.List;
 public interface IRecipeDAO {
     List<Recipe> listarTodas();
     boolean save(Recipe r);
-    boolean delate(int id);
+    Recipe getRecetaCompleta(int id);
+    boolean update(Recipe r);
+    boolean delete(int id);
 }
