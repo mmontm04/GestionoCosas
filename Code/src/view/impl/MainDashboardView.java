@@ -40,6 +40,10 @@ public class MainDashboardView extends JFrame {
             JButton btnUsuarios = new JButton("3. Administrar Usuarios");
             add(btnUsuarios);
             btnUsuarios.addActionListener(e -> new UserController().init());
+
+            JButton btnPedidos = new JButton("4. Gestión de Pedidos (Compras)");
+            add(btnPedidos);
+            btnPedidos.addActionListener(e -> new controller.impl.OrderController().init());
             
             add(new JSeparator());
         } 

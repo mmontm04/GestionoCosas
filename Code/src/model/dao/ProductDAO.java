@@ -53,23 +53,57 @@ public class ProductDAO implements IProductDAO{
         }
     }
 
-    public boolean actualizarStock(int productoId, double cantidadARestar) {
+public boolean actualizarStock(int productoId, double cantidadARestar) {
         String sql = "UPDATE productos SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual >= ?";
         
-        try (Connection conn = DbConnection.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (java.sql.Connection conn = config.DbConnection.getInstance().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setDouble(1, cantidadARestar);
             pstmt.setInt(2, productoId);
             pstmt.setDouble(3, cantidadARestar); // Para evitar stock negativo
             
             int filas = pstmt.executeUpdate();
-            return filas > 0; // Si devuelve true, es que había stock suficiente y se restó
             
-        } catch (SQLException e) {
+            if (filas > 0) {
+                Product p = obtenerPorId(productoId);
+                
+                if (p != null) {
+                    util.patterns.observer.StockAlertManager.getInstance()
+                        .comprobarStock(p.getNombre(), p.getStockActual(), p.getStockMinimo());
+                }
+                return true; 
+            }
+            return false; 
+            
+        } catch (java.sql.SQLException e) {
             System.err.println("Error al actualizar stock: " + e.getMessage());
             return false;
         }
+    }
+
+    public Product obtenerPorId(int id) {
+        String sql = "SELECT * FROM productos WHERE id = ?";
+        Product p = null;
+        
+        try (java.sql.Connection conn = config.DbConnection.getInstance().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            java.sql.ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setNombre(rs.getString("nombre"));
+                p.setStockActual(rs.getDouble("stock_actual"));
+                p.setStockMinimo(rs.getDouble("stock_minimo"));
+                p.setPrecio(rs.getDouble("precio"));
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Error al obtener producto por ID: " + e.getMessage());
+        }
+        return p;
     }
     
     // Aquí añadiremos más adelante: crear, actualizar, eliminar...

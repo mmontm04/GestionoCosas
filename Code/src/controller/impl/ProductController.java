@@ -59,4 +59,19 @@ public class ProductController {
         
         form.setVisible(true);
     }
+    /* 
+    private void calcularValorInventario() {
+        util.patterns.strategy.IStockStrategy estrategia = new util.patterns.strategy.SellPriceStrategy();
+        
+        // 2. Obtenemos datos
+        List<Product> lista = dao.listarTodos();
+        
+        // 3. Ejecutamos estrategia
+        double valor = estrategia.calcularValorTotal(lista);
+        
+        JOptionPane.showMessageDialog(view, 
+            "El valor del almacén según [" + estrategia.getNombreEstrategia() + "] es:\n" + valor + " €");
+    }
+    */
+    
 }

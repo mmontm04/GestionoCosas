@@ -13,7 +13,7 @@ public class Main {
             
             if (conn != null) {
                 // 2. Si hay conexión, lanzamos el Controlador del Login
-                LoginController loginController = new LoginController();
+                LoginController loginController = new LoginController();          
                 loginController.init();
             } else {
                 System.err.println("No se pudo conectar a la base de datos.");

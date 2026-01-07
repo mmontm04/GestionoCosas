@@ -5,6 +5,8 @@ import model.dao.UserDAO;
 import model.entities.User;
 import view.impl.LoginView;
 import view.impl.MainDashboardView;
+import util.patterns.observer.StockAlertManager;
+import util.patterns.observer.ManagerStockObserver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -48,6 +50,7 @@ public class LoginController {
             view.showMessage("¡Bienvenido " + usuarioEncontrado.getRole() + "!");
             
             if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(pass)) {
+            util.SessionController.getInstance().login(usuarioEncontrado);
             view.dispose(); 
             
             MainDashboardView dashboard = new MainDashboardView(usuarioEncontrado.getRole());

@@ -1,5 +1,5 @@
 package util.patterns.observer;
 
-public class IStockObserver {
-    
+public interface IStockObserver {
+    void onStockBajo(String nombreProducto, double stockActual, double stockMinimo);
 }
