@@ -10,6 +10,7 @@ public class ProductListView extends JFrame {
     private JTable tabla;
     private DefaultTableModel modeloTabla;
     private JButton btnNuevo;
+    private JButton btnEditar;
     private JButton btnCerrar;
 
     public ProductListView() {
@@ -30,6 +31,9 @@ public class ProductListView extends JFrame {
         
         btnNuevo = new JButton("Nuevo Producto");
         panelBotones.add(btnNuevo);
+
+        btnEditar = new JButton("Editar Producto");
+        panelBotones.add(btnEditar);
         
         btnCerrar = new JButton("Cerrar");
         panelBotones.add(btnCerrar);
@@ -42,6 +46,23 @@ public class ProductListView extends JFrame {
 
     public JButton getBtnNuevo() {
         return btnNuevo;
+    }
+
+    public JButton getBtnEditar() {
+        return btnEditar;
+    }
+
+    public Integer getProductoSeleccionadoId() {
+        int fila = tabla.getSelectedRow();
+        if (fila == -1) {
+            return null;
+        }
+        Object value = tabla.getValueAt(fila, 0);
+        return (value instanceof Number) ? ((Number) value).intValue() : Integer.parseInt(value.toString());
+    }
+
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
     }
 
     // Método para llenar la tabla con datos reales

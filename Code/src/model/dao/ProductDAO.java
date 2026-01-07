@@ -53,7 +53,28 @@ public class ProductDAO implements IProductDAO{
         }
     }
 
-public boolean actualizarStock(int productoId, double cantidadARestar) {
+    @Override
+    public boolean actualizar(Product p) {
+        String sql = "UPDATE productos SET nombre = ?, stock_actual = ?, stock_minimo = ?, precio = ? WHERE id = ?";
+
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, p.getNombre());
+            pstmt.setDouble(2, p.getStockActual());
+            pstmt.setDouble(3, p.getStockMinimo());
+            pstmt.setDouble(4, p.getPrecio());
+            pstmt.setInt(5, p.getId());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar producto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean actualizarStock(int productoId, double cantidadARestar) {
         String sql = "UPDATE productos SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual >= ?";
         
         try (java.sql.Connection conn = config.DbConnection.getInstance().getConnection();
