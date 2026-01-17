@@ -8,7 +8,6 @@ public interface IProductDAO {
     List<Product> listarTodos();
     boolean guardar(Product p);
     boolean actualizar(Product p);
-
     boolean eliminar(int id);
     // Producto buscarPorId(int id);
 }

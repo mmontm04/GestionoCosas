@@ -19,7 +19,7 @@ public class ProductListView extends JFrame {
 
     public ProductListView() {
         setTitle("Catálogo de Productos");
-        setSize(600, 400);
+        setSize(800, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
