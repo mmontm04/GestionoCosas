@@ -1,0 +1,63 @@
+USE test;
+
+-- 1. CREAR TABLA USUARIOS
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    rol VARCHAR(20) NOT NULL
+);
+
+-- 2. INSERTAR EL ADMIN 
+DELETE FROM usuarios WHERE username = 'admin';
+INSERT INTO usuarios (username, password, rol) VALUES ('admin', 'admin123', 'GERENTE');
+
+-- 3. INSERTAR UN COCINERO BASE
+DELETE FROM usuarios WHERE username = 'cocinero';
+INSERT INTO usuarios (username, password, rol) VALUES ('cocinero', 'cocinero123', 'COCINERO');
+
+-- 4. RESTO DE TABLAS NECESARIAS
+CREATE TABLE IF NOT EXISTS productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    stock_actual DECIMAL(10,2) DEFAULT 0,
+    stock_minimo DECIMAL(10,2) DEFAULT 5,
+    precio DECIMAL(10,2) DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS recetas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio_venta DECIMAL(10,2) DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS receta_ingredientes (
+    receta_id INT,
+    producto_id INT,
+    cantidad_necesaria DECIMAL(10,2),
+    PRIMARY KEY (receta_id, producto_id)
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    proveedor VARCHAR(100),
+    estado VARCHAR(20) DEFAULT 'PENDIENTE'
+);
+
+CREATE TABLE IF NOT EXISTS lineas_pedido (
+    pedido_id INT,
+    producto_id INT,
+    cantidad DECIMAL(10,2),
+    coste_unitario DECIMAL(10,2),
+    PRIMARY KEY (pedido_id, producto_id)
+);
+
+CREATE TABLE IF NOT EXISTS logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    usuario VARCHAR(50),
+    accion VARCHAR(100),
+    detalle TEXT
+);

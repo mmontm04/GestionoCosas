@@ -10,11 +10,11 @@ public class DbConnection {
     private Connection connection;
 
     // 2. Datos de conexión
-    private static final String HOST = "sql7.freesqldatabase.com"; 
-    private static final String PORT = "3306";
-    private static final String DB_NAME = "sql7813457";
-    private static final String USER = "sql7813457"; 
-    private static final String PASSWORD = "nilm3AGUkD";
+    private static final String HOST = "gateway01.eu-central-1.prod.aws.tidbcloud.com"; 
+    private static final String PORT = "4000";
+    private static final String DB_NAME = "test";
+    private static final String USER = "3WL8FgGBaWqa2sN.root";
+    private static final String PASSWORD = "wepSlW45oiVQtItH";
 
     // Cadena de conexión JDBC
     private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME;
