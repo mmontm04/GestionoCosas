@@ -1,6 +1,9 @@
 package model.service;
 
 import config.DbConnection;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
@@ -43,6 +46,43 @@ public class BackupService {
             }
         }
         guardar(rutaArchivo, sql.toString());
+    }
+
+    public void restaurarSQL(String rutaArchivo) throws Exception {
+        Connection conn = null;
+        try {
+            conn = DbConnection.getInstance().getConnection();
+            conn.setAutoCommit(false); 
+            Statement stmt = conn.createStatement();
+
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    if (linea.trim().startsWith("--") || linea.trim().isEmpty()) continue;
+                    sb.append(linea);
+                }
+            }
+
+            String[] comandos = sb.toString().split(";");
+
+            for (String comando : comandos) {
+                if (!comando.trim().isEmpty()) {
+                    try {
+                        stmt.executeUpdate(comando);
+                    } catch (SQLException ex) {
+                        System.err.println("Error ejecutando comando: " + comando + "\nCausa: " + ex.getMessage());
+                    }
+                }
+            }
+
+            conn.commit();
+        } catch (Exception e) {
+            if (conn != null) conn.rollback();
+            throw e;
+        } finally {
+            if (conn != null) conn.setAutoCommit(true);
+        }
     }
 
     // --- OPCIÓN CSV ---
