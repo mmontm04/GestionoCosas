@@ -23,7 +23,7 @@ public class UserDAO implements IUserDAO {
                 lista.add(new User(
                     rs.getInt("id"),
                     rs.getString("username"),
-                    "***", // Por seguridad no mostramos la contraseña en la lista
+                    "******", 
                     rs.getString("rol")
                 ));
             }
@@ -65,6 +65,24 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
+    public boolean update(User u) {
+        String sql = "UPDATE usuarios SET username = ?, password = ?, rol = ? WHERE id = ?";
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, u.getUsername());
+            pstmt.setString(2, u.getPassword());
+            pstmt.setString(3, u.getRole());
+            pstmt.setInt(4, u.getId());
+            
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public User findByUsername(String username) {
         String sql = "SELECT * FROM usuarios WHERE username = ?";
         User user = null;
@@ -87,5 +105,24 @@ public class UserDAO implements IUserDAO {
             System.err.println("Error al buscar usuario: " + e.getMessage());
         }
         return user;
+    }
+
+    @Override
+    public User findById(int id) {
+        String sql = "SELECT * FROM usuarios WHERE id = ?";
+        try (Connection conn = DbConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new User(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getString("rol")
+                );
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return null;
     }
 }

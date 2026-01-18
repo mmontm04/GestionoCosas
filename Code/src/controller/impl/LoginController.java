@@ -5,8 +5,6 @@ import model.dao.UserDAO;
 import model.entities.User;
 import view.impl.LoginView;
 import view.impl.MainDashboardView;
-import util.patterns.observer.StockAlertManager;
-import util.patterns.observer.ManagerStockObserver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,23 +43,16 @@ public class LoginController {
         User usuarioEncontrado = userDAO.findByUsername(user);
 
         if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(pass)) {
+            
             util.SessionController.getInstance().login(usuarioEncontrado);
 
-            view.showMessage("¡Bienvenido " + usuarioEncontrado.getRole() + "!");
-            
-            if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(pass)) {
-            util.SessionController.getInstance().login(usuarioEncontrado);
-            view.dispose(); 
+
+            System.out.println("Login correcto. Rol: " + usuarioEncontrado.getRole());
+
+            view.dispose(); // Cerrar Login
             
             MainDashboardView dashboard = new MainDashboardView(usuarioEncontrado.getRole());
             dashboard.setVisible(true);
-            
-            } else {
-                view.showMessage("Usuario o contraseña incorrectos.");
-            }
-            
-            // TODO: Iniciar Dashboard según rol
-            System.out.println("Login correcto. Rol: " + usuarioEncontrado.getRole());
             
         } else {
             view.showMessage("Usuario o contraseña incorrectos.");

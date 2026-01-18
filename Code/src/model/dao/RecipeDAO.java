@@ -42,38 +42,35 @@ public class RecipeDAO implements IRecipeDAO {
         
         try {
             conn = config.DbConnection.getInstance().getConnection();
-            conn.setAutoCommit(false); // 1. INICIAR TRANSACCIÓN (Todo o nada)
+            conn.setAutoCommit(false);
 
-            // A. Guardar la Receta
             PreparedStatement psReceta = conn.prepareStatement(sqlReceta, Statement.RETURN_GENERATED_KEYS);
             psReceta.setString(1, r.getNombre());
             psReceta.setString(2, r.getDescripcion());
             psReceta.setDouble(3, r.getPrecioVenta());
             psReceta.executeUpdate();
 
-            // B. Obtener el ID generado (ej: ID 15)
             ResultSet rs = psReceta.getGeneratedKeys();
             int idReceta = 0;
             if (rs.next()) {
                 idReceta = rs.getInt(1);
             }
 
-            // C. Guardar los ingredientes uno a uno
             PreparedStatement psIngrediente = conn.prepareStatement(sqlIngrediente);
             for (RecipeIngredient item : r.getIngredientes()) {
-                psIngrediente.setInt(1, idReceta); // Usamos el ID nuevo
+                psIngrediente.setInt(1, idReceta);
                 psIngrediente.setInt(2, item.getProducto().getId());
                 psIngrediente.setDouble(3, item.getCantidad());
-                psIngrediente.executeUpdate(); // Ejecutar inserción
+                psIngrediente.executeUpdate();
             }
 
-            conn.commit(); // 2. CONFIRMAR CAMBIOS (Si llegamos aquí, todo ha ido bien)
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
             System.err.println("Error al guardar receta compleja: " + e.getMessage());
             if (conn != null) {
-                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } // DESHACER si hay error
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
             return false;
         } finally {

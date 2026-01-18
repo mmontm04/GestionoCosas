@@ -33,6 +33,10 @@ public class UserFormView extends JDialog {
         add(btnGuardar);
     }
 
+    public void setUsername(String username) { this.txtUsername.setText(username); }
+    public void setPassword(String password) { this.txtPassword.setText(password); }
+    public void setRole(String role) { this.comboRol.setSelectedItem(role); }
+
     public String getUsername() { return txtUsername.getText(); }
     public String getPassword() { return new String(txtPassword.getPassword()); }
     public String getRole() { return (String) comboRol.getSelectedItem(); }

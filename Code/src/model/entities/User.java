@@ -45,7 +45,6 @@ public class User {
     }
 
     public void setRole(String role) { 
-        //Añadir validación si es gerente o cocinero
         this.role = role; 
     }
 }

@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class OrderDAO {
+public class OrderDAO implements IOrderDAO {
 
+    @Override
     public boolean crearPedido(Order p) {
         Connection conn = null;
         try {
@@ -49,6 +50,7 @@ public class OrderDAO {
         }
     }
 
+    @Override
     public boolean marcarRecibido(int idPedido) {
         Connection conn = null;
         try {
@@ -92,6 +94,7 @@ public class OrderDAO {
         }
     }
     
+    @Override
     public List<Order> listarTodos() {
         List<Order> lista = new ArrayList<>();
         String sql = "SELECT * FROM pedidos ORDER BY id DESC";
@@ -121,6 +124,7 @@ public class OrderDAO {
         return lista;
     }
 
+    @Override
     public Order obtenerPedidoCompleto(int id) {
         Order o = null;
         String sqlHead = "SELECT * FROM pedidos WHERE id = ?";
@@ -137,7 +141,6 @@ public class OrderDAO {
             if (rs.next()) {
                 o = new Order(rs.getInt("id"), rs.getString("fecha"), rs.getString("proveedor"), rs.getString("estado"));
                 
-                // Cargar líneas
                 try (PreparedStatement psL = conn.prepareStatement(sqlLines)) {
                     psL.setInt(1, id);
                     ResultSet rsL = psL.executeQuery();
@@ -154,6 +157,7 @@ public class OrderDAO {
         return o;
     }
 
+    @Override
     public boolean procesarEntregaParcial(Order pedidoOriginal, Map<Product, Double> cantidadesRecibidas) {
         Connection conn = null;
         try {
@@ -174,7 +178,6 @@ public class OrderDAO {
                 Product prod = entry.getKey();
                 Double cantRecibida = entry.getValue();
 
-                // Actualizar línea del pedido original a lo que realmente llegó
                 psLinea.setDouble(1, cantRecibida);
                 psLinea.setInt(2, pedidoOriginal.getId());
                 psLinea.setInt(3, prod.getId());
@@ -243,6 +246,7 @@ public class OrderDAO {
         }
     }
 
+    @Override
     public boolean actualizarCantidades(Order pedido) {
         String sql = "UPDATE lineas_pedido SET cantidad = ? WHERE pedido_id = ? AND producto_id = ?";
         Connection conn = null;

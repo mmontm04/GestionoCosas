@@ -11,7 +11,7 @@ public class ProductDAO implements IProductDAO{
     @Override
     public List<Product> listarTodos() {
         List<Product> lista = new ArrayList<>();
-        String sql = "SELECT * FROM productos";
+        String sql = "SELECT * FROM productos WHERE activo = 1";
 
         try (Connection conn = DbConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -45,7 +45,7 @@ public class ProductDAO implements IProductDAO{
             pstmt.setDouble(4, p.getPrecio());
             
             int filasAfectadas = pstmt.executeUpdate();
-            return filasAfectadas > 0; // Devuelve true si se guardó
+            return filasAfectadas > 0;
             
         } catch (SQLException e) {
             System.err.println("Error al guardar producto: " + e.getMessage());
@@ -76,7 +76,7 @@ public class ProductDAO implements IProductDAO{
 
     @Override
     public boolean eliminar(int id) {
-        String sql = "DELETE FROM productos WHERE id = ?";
+        String sql = "UPDATE productos SET activo = 0 WHERE id = ?";
 
         try (Connection conn = DbConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -85,11 +85,12 @@ public class ProductDAO implements IProductDAO{
             int filasAfectadas = pstmt.executeUpdate();
             return filasAfectadas > 0;
         } catch (SQLException e) {
-            System.err.println("Error al eliminar producto: " + e.getMessage());
+            System.err.println("Error al eliminar producto (Lógico): " + e.getMessage());
             return false;
         }
     }
 
+    @Override
     public boolean actualizarStock(int productoId, double cantidadARestar) {
         String sql = "UPDATE productos SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual >= ?";
         
@@ -119,6 +120,7 @@ public class ProductDAO implements IProductDAO{
         }
     }
 
+    @Override
     public Product obtenerPorId(int id) {
         String sql = "SELECT * FROM productos WHERE id = ?";
         Product p = null;
@@ -142,6 +144,46 @@ public class ProductDAO implements IProductDAO{
         }
         return p;
     }
-    
-    // Aquí añadiremos más adelante: crear, actualizar, eliminar...
+
+    @Override
+    public int contarTotal() {
+        String sql = "SELECT COUNT(*) FROM productos WHERE activo = 1";
+        try (java.sql.Connection conn = config.DbConnection.getInstance().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public java.util.List<Product> listarPaginado(int limite, int offset) {
+        java.util.List<Product> lista = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM productos WHERE activo = 1 LIMIT ? OFFSET ?";
+
+        try (java.sql.Connection conn = config.DbConnection.getInstance().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, limite);
+            pstmt.setInt(2, offset);
+            
+            java.sql.ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setNombre(rs.getString("nombre"));
+                p.setStockActual(rs.getDouble("stock_actual"));
+                p.setStockMinimo(rs.getDouble("stock_minimo"));
+                p.setPrecio(rs.getDouble("precio"));
+                lista.add(p);
+            }
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
 }

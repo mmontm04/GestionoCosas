@@ -8,4 +8,6 @@ public interface IUserDAO {
     public boolean create(User u);
     public boolean delete(int id);
     User findByUsername(String username);
+    boolean update(User u);
+    User findById(int id);
 }

@@ -1,6 +1,9 @@
+-- 1. SELECCIONAR LA BASE DE DATOS
 USE test;
 
--- 1. CREAR TABLA USUARIOS
+-- ==========================================
+-- 2. TABLA USUARIOS Y DATOS INICIALES
+-- ==========================================
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -8,37 +11,31 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol VARCHAR(20) NOT NULL
 );
 
--- 2. INSERTAR EL ADMIN 
-DELETE FROM usuarios WHERE username = 'admin';
-INSERT INTO usuarios (username, password, rol) VALUES ('admin', 'admin123', 'GERENTE');
+DELETE FROM usuarios WHERE username IN ('admin', 'cocinero');
 
--- 3. INSERTAR UN COCINERO BASE
-DELETE FROM usuarios WHERE username = 'cocinero';
+INSERT INTO usuarios (username, password, rol) VALUES ('admin', 'admin123', 'GERENTE');
 INSERT INTO usuarios (username, password, rol) VALUES ('cocinero', 'cocinero123', 'COCINERO');
 
--- 4. RESTO DE TABLAS NECESARIAS
+-- ==========================================
+-- 3. TABLA PRODUCTOS (Con Borrado Lógico)
+-- ==========================================
 CREATE TABLE IF NOT EXISTS productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     stock_actual DECIMAL(10,2) DEFAULT 0,
     stock_minimo DECIMAL(10,2) DEFAULT 5,
-    precio DECIMAL(10,2) DEFAULT 0
+    precio DECIMAL(10,2) DEFAULT 0,
+    activo TINYINT DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS recetas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    precio_venta DECIMAL(10,2) DEFAULT 0
-);
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS activo TINYINT DEFAULT 1;
 
-CREATE TABLE IF NOT EXISTS receta_ingredientes (
-    receta_id INT,
-    producto_id INT,
-    cantidad_necesaria DECIMAL(10,2),
-    PRIMARY KEY (receta_id, producto_id)
-);
+-- Aseguramos que todos los productos existentes sean visibles
+UPDATE productos SET activo = 1 WHERE activo IS NULL;
 
+-- ==========================================
+-- 4. TABLAS DE GESTIÓN DE PEDIDOS
+-- ==========================================
 CREATE TABLE IF NOT EXISTS pedidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -54,6 +51,26 @@ CREATE TABLE IF NOT EXISTS lineas_pedido (
     PRIMARY KEY (pedido_id, producto_id)
 );
 
+-- ==========================================
+-- 5. TABLAS DE RECETAS
+-- ==========================================
+CREATE TABLE IF NOT EXISTS recetas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio_venta DECIMAL(10,2) DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS receta_ingredientes (
+    receta_id INT,
+    producto_id INT,
+    cantidad_necesaria DECIMAL(10,2),
+    PRIMARY KEY (receta_id, producto_id)
+);
+
+-- ==========================================
+-- 6. TABLA DE LOGS (Auditoría)
+-- ==========================================
 CREATE TABLE IF NOT EXISTS logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 public class ProductController {
     private ProductListView listView;
     private ProductDAO dao;
+    private int paginaActual = 1;
+    private final int ITEMS_POR_PAGINA = 5;
 
     public ProductController() {
         this.listView = new ProductListView();
@@ -24,6 +26,31 @@ public class ProductController {
     public void init() {
         cargarDatos();
         listView.setVisible(true);
+        this.listView.getBtnAnterior().addActionListener(e -> cambiarPagina(-1));
+        this.listView.getBtnSiguiente().addActionListener(e -> cambiarPagina(1));
+    }
+
+    private void cargarDatos() {
+        int offset = (paginaActual - 1) * ITEMS_POR_PAGINA;
+
+        List<Product> productos = dao.listarPaginado(ITEMS_POR_PAGINA, offset);
+        listView.mostrarProductos(productos);
+
+        int totalProductos = dao.contarTotal();
+        int totalPaginas = (int) Math.ceil((double) totalProductos / ITEMS_POR_PAGINA);
+
+        if (totalPaginas == 0) totalPaginas = 1; 
+
+        listView.getLblPagina().setText("Página " + paginaActual + " de " + totalPaginas);
+
+        listView.getBtnAnterior().setEnabled(paginaActual > 1);
+
+        listView.getBtnSiguiente().setEnabled(paginaActual < totalPaginas);
+    }
+
+    private void cambiarPagina(int delta) {
+        paginaActual += delta;
+        cargarDatos();
     }
 
     private void eliminarProductoSeleccionado() {
@@ -50,11 +77,6 @@ public class ProductController {
         } else {
             listView.showMessage("No se pudo eliminar el producto.");
         }
-    }
-
-    private void cargarDatos() {
-        List<Product> productos = dao.listarTodos();
-        listView.mostrarProductos(productos);
     }
 
     private void abrirFormularioCrear() {

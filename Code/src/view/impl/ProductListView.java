@@ -15,6 +15,9 @@ public class ProductListView extends JFrame {
     private JButton btnEditar;
     private JButton btnEliminar;
     private JButton btnCerrar;
+    private JButton btnAnterior;
+    private JButton btnSiguiente;
+    private JLabel lblPagina;
     private IStockViewStrategy stockViewStrategy;
 
     public ProductListView() {
@@ -23,7 +26,17 @@ public class ProductListView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // 1. Configurar columnas de la tabla
+        JPanel panelPaginacion = new JPanel();
+        btnAnterior = new JButton("< Anterior");
+        btnSiguiente = new JButton("Siguiente >");
+        lblPagina = new JLabel("Página 1");
+
+        panelPaginacion.add(btnAnterior);
+        panelPaginacion.add(lblPagina);
+        panelPaginacion.add(btnSiguiente);
+
+        add(panelPaginacion, BorderLayout.NORTH);
+
         String[] columnas = {"ID", "Nombre", "Stock", "Mínimo", "Precio (€)"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modeloTabla);
@@ -32,7 +45,6 @@ public class ProductListView extends JFrame {
         
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        // 2. Panel de botones inferior
         JPanel panelBotones = new JPanel();
         
         btnNuevo = new JButton("Nuevo Producto");
@@ -49,21 +61,15 @@ public class ProductListView extends JFrame {
         
         add(panelBotones, BorderLayout.SOUTH);
 
-        // Acción básica del botón cerrar
         btnCerrar.addActionListener(e -> dispose());
     }
 
-    public JButton getBtnNuevo() {
-        return btnNuevo;
-    }
-
-    public JButton getBtnEditar() {
-        return btnEditar;
-    }
-
-    public JButton getBtnEliminar() {
-        return btnEliminar;
-    }
+    public JButton getBtnNuevo() { return btnNuevo; }
+    public JButton getBtnEditar() { return btnEditar; }
+    public JButton getBtnEliminar() { return btnEliminar; }
+    public JButton getBtnAnterior() { return btnAnterior; }
+    public JButton getBtnSiguiente() { return btnSiguiente; }
+    public JLabel getLblPagina() { return lblPagina; }
 
     public Integer getProductoSeleccionadoId() {
         int fila = tabla.getSelectedRow();

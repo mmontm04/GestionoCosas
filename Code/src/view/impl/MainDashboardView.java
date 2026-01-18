@@ -4,16 +4,15 @@ import controller.impl.ProductController;
 import controller.impl.RecipeController;
 import controller.impl.UserController;
 import controller.impl.ChefController;
+import controller.impl.BackupController;
 import javax.swing.*;
 import java.awt.*;
 
 public class MainDashboardView extends JFrame {
 
     public MainDashboardView(String rol) {
-        // Limpiamos el rol de posibles espacios en blanco (ej: "GERENTE ")
         String rolLimpio = (rol != null) ? rol.trim().toUpperCase() : "";
 
-        // CHIVATO: Ponemos el rol en el título para ver qué detecta
         setTitle("Sistema de Gestión - Rol Detectado: [" + rolLimpio + "]");
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,11 +28,11 @@ public class MainDashboardView extends JFrame {
             // ===============================================
             // ZONA EXCLUSIVA DE GERENTES
             // ===============================================
-            JButton btnProductos = new JButton("1. Gestionar Productos (Almacén)");
+            JButton btnProductos = new JButton("1. Gestionar Productos");
             add(btnProductos);
             btnProductos.addActionListener(e -> new ProductController().init());
 
-            JButton btnRecetas = new JButton("2. Gestión de Recetas (Menú)");
+            JButton btnRecetas = new JButton("2. Gestión de Recetas");
             add(btnRecetas);
             btnRecetas.addActionListener(e -> new RecipeController().init());
 
@@ -41,15 +40,19 @@ public class MainDashboardView extends JFrame {
             add(btnUsuarios);
             btnUsuarios.addActionListener(e -> new UserController().init());
 
-            JButton btnPedidos = new JButton("4. Gestión de Pedidos (Compras)");
+            JButton btnPedidos = new JButton("4. Gestión de Pedidos");
             add(btnPedidos);
             btnPedidos.addActionListener(e -> new controller.impl.OrderController().init());
+
+            JButton btnBackup = new JButton("5. Copias de Seguridad");
+            add(btnBackup);
+            btnBackup.addActionListener(e -> new BackupController().init());
             
             add(new JSeparator());
         } 
         
         JButton btnCocina = new JButton(">>> ENTRAR A COCINA (Órdenes) <<<");
-        btnCocina.setBackground(new Color(255, 200, 200)); // Color salmón
+        btnCocina.setBackground(new Color(252, 209, 198));
         add(btnCocina);
 
         btnCocina.addActionListener(e -> new ChefController().init());
