@@ -12,7 +12,6 @@ public class RecipeIngredient {
     public Product getProducto() { return producto; }
     public double getCantidad() { return cantidad; }
     
-    // Para mostrarlo bonito en la tabla luego
     @Override
     public String toString() {
         return producto.getNombre() + " (" + cantidad + ")";

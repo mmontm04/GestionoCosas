@@ -3,8 +3,9 @@ package controller.impl;
 import model.dao.IUserDAO;
 import model.dao.UserDAO;
 import model.entities.User;
-import view.impl.LoginView;
-import view.impl.MainDashboardView;
+import view.LoginView;
+import view.MainDashboardView;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

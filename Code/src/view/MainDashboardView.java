@@ -1,4 +1,4 @@
-package view.impl;
+package view;
 
 import controller.impl.ProductController;
 import controller.impl.RecipeController;

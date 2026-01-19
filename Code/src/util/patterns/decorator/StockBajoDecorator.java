@@ -10,10 +10,8 @@ public class StockBajoDecorator extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, 
             boolean isSelected, boolean hasFocus, int row, int column) {
         
-        // 1. Llamamos al renderizado base (el componente normal)
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        // 2. Aplicamos la lógica "extra" (Decoración)
         try {
             // Obtenemos stock actual (columna 2) y mínimo (columna 3)
             double stock = Double.parseDouble(table.getValueAt(row, 2).toString());

@@ -3,8 +3,9 @@ package controller.impl;
 import model.dao.UserDAO;
 import model.entities.User;
 import util.SessionController;
-import view.impl.UserFormView;
-import view.impl.UserListView;
+import view.UserFormView;
+import view.UserListView;
+
 import javax.swing.JOptionPane;
 import java.util.List;
 

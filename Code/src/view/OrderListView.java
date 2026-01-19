@@ -1,4 +1,4 @@
-package view.impl;
+package view;
 
 import model.entities.Order;
 import javax.swing.*;

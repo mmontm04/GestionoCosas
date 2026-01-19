@@ -2,8 +2,9 @@ package controller.impl;
 
 import model.dao.ProductDAO;
 import model.entities.Product;
-import view.impl.ProductFormView;
-import view.impl.ProductListView;
+import view.ProductFormView;
+import view.ProductListView;
+
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -155,6 +156,7 @@ public class ProductController {
 
         form.setVisible(true);
     }
+    
     /* 
     private void calcularValorInventario() {
         util.patterns.strategy.IStockStrategy estrategia = new util.patterns.strategy.SellPriceStrategy();

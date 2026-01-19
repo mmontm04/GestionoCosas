@@ -7,7 +7,6 @@ public class Order {
     private String fecha;
     private String proveedor;
     private String estado;
-    // Mapa: Producto -> Cantidad
     private Map<Product, Double> items = new HashMap<>();
 
     public Order() {}

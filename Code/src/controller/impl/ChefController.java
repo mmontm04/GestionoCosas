@@ -4,7 +4,7 @@ import model.dao.RecipeDAO;
 import model.entities.Recipe;
 import model.service.ChefService;
 import util.SessionController;
-import view.impl.RecipeListView;
+import view.RecipeListView;
 
 import javax.swing.JOptionPane;
 import java.util.List;
@@ -20,7 +20,6 @@ public class ChefController {
         this.service = new ChefService();
         
         // 1. Adaptar la vista para el Cocinero
-        // Cambiamos el título y el texto del botón para que tenga sentido en este contexto
         this.view.setTitle("Cocina - Lista de Platos a Preparar");
         this.view.getBtnNuevo().setText("Cocinar Plato"); 
         
@@ -29,7 +28,6 @@ public class ChefController {
     }
 
     public void init() {
-        // --- BLOQUE DE SEGURIDAD ---
         // Permitimos entrar a COCINERO y a GERENTE (para supervisar)
         String rol = SessionController.getInstance().getUser().getRole();
         if (!rol.equals("COCINERO") && !rol.equals("GERENTE")) {
@@ -41,7 +39,6 @@ public class ChefController {
         if (rol.equals("GERENTE")) {
             this.view.setTitle("Cocina (Modo Supervisión Gerente)");
         }
-        // ---------------------------
 
         cargarDatos();
         view.setVisible(true);
@@ -54,7 +51,6 @@ public class ChefController {
     }
 
     private void cocinarPlatoSeleccionado() {
-        // 1. Obtener el ID de la receta seleccionada en la tabla
         int idReceta = view.getIdRecetaSeleccionada();
         
         if (idReceta == -1) {
@@ -62,7 +58,6 @@ public class ChefController {
             return;
         }
 
-        // 2. Confirmación de seguridad
         int confirm = JOptionPane.showConfirmDialog(view, 
             "¿Seguro que quieres cocinar este plato?\nSe descontarán los ingredientes del stock.", 
             "Confirmar Cocinado", 
@@ -81,7 +76,6 @@ public class ChefController {
 
         String resultado = service.cocinarReceta(recetaCompleta);
 
-        // 5. Mostrar resultado
         if (resultado.equals("OK")) {
             JOptionPane.showMessageDialog(view, "✅ ¡Plato cocinado con éxito!\nStock de ingredientes actualizado.", "Cocina", JOptionPane.INFORMATION_MESSAGE);
         } else {

@@ -14,7 +14,6 @@ public class BackupController {
 
     // Método que llama la vista principal
     public void init() {
-        // 1. Preguntar qué quiere hacer
         String[] opciones = {"Copia Seguridad (SQL)", "Exportar Productos (CSV)", "Exportar Pedidos (JSON)", "♻️ IMPORTAR / RESTAURAR DATOS (SQL)", "Cancelar"};
         
         int seleccion = JOptionPane.showOptionDialog(null, 
@@ -29,7 +28,7 @@ public class BackupController {
             return;
         }
 
-        // 2. Configurar extensiones
+        // Configurar extensiones
         String ext = (seleccion == 0) ? "sql" : (seleccion == 1) ? "csv" : "json";
         String desc = (seleccion == 0) ? "SQL Backup" : (seleccion == 1) ? "CSV Excel" : "JSON Data";
         String defaultName = (seleccion == 0) ? "backup_full" : (seleccion == 1) ? "productos" : "pedidos";
@@ -44,7 +43,6 @@ public class BackupController {
             if (!ruta.endsWith("." + ext)) ruta += "." + ext;
 
             try {
-                // 4. Ejecutar la lógica
                 switch (seleccion) {
                     case 0: service.exportarSQL(ruta); break;
                     case 1: service.exportarCSV("productos", ruta); break;

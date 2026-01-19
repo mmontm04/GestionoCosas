@@ -1,4 +1,4 @@
-package view.impl;
+package view;
 
 import model.entities.Order;
 import model.entities.Product;
@@ -12,7 +12,7 @@ public class OrderDetailView extends JDialog {
     private DefaultTableModel modelo;
     private JButton btnGuardar;
     private JButton btnCerrar;
-    private boolean guardado = false; // Para saber si el usuario dio a guardar
+    private boolean guardado = false;
 
     public OrderDetailView(Frame parent, Order pedido) {
         super(parent, "Detalle del Pedido #" + pedido.getId(), true); // Modal
@@ -20,8 +20,7 @@ public class OrderDetailView extends JDialog {
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
-        // 1. Configurar Tabla
-        // Columnas: ID Prod, Nombre, Cantidad (Editable)
+        // 1. Tabla de detalles
         String[] colNames = {"ID", "Producto", "Cantidad"};
         boolean esEditable = "PENDIENTE".equals(pedido.getEstado());
 
@@ -67,7 +66,6 @@ public class OrderDetailView extends JDialog {
             });
             panelSur.add(btnGuardar);
             
-            // Aviso visual
             JLabel aviso = new JLabel(" (Doble clic en cantidad para editar) ");
             aviso.setForeground(Color.BLUE);
             panelSur.add(aviso);
@@ -78,12 +76,10 @@ public class OrderDetailView extends JDialog {
     }
 
     private void actualizarModeloPedido(Order pedido) {
-        // Recorremos la tabla y actualizamos el mapa del pedido
         for (int i = 0; i < modelo.getRowCount(); i++) {
             int idProd = (int) modelo.getValueAt(i, 0);
             double cantidad = Double.parseDouble(modelo.getValueAt(i, 2).toString());
             
-            // Buscar el producto en el mapa original y actualizar cantidad
             for (Product p : pedido.getItems().keySet()) {
                 if (p.getId() == idProd) {
                     pedido.getItems().put(p, cantidad);

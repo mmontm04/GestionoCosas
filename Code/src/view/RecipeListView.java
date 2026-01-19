@@ -1,4 +1,4 @@
-package view.impl;
+package view;
 
 import model.entities.Recipe;
 import javax.swing.*;

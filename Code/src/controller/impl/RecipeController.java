@@ -1,11 +1,11 @@
 package controller.impl;
 
 import util.SessionController;
+import view.ManagerRecipesFormView;
+import view.RecipeListView;
 import model.dao.IRecipeDAO;
 import model.dao.RecipeDAO;
 import model.entities.Recipe;
-import view.impl.ManagerRecipesFormView;
-import view.impl.RecipeListView;
 
 import javax.swing.JOptionPane;
 import java.util.List;
@@ -40,16 +40,13 @@ public class RecipeController {
 
     private void mostrarFormulario() {
         if (!util.SessionController.getInstance().esGerente()) {
-            // ... (tu bloqueo de seguridad) ...
             return;
         }
 
-        // 1. Cargar productos para el combo
         model.dao.ProductDAO prodDao = new model.dao.ProductDAO();
         List<model.entities.Product> listaProductos = prodDao.listarTodos();
 
-        // 2. Crear vista pasando productos
-        view.impl.ManagerRecipesFormView form = new view.impl.ManagerRecipesFormView(view, listaProductos);
+        view.ManagerRecipesFormView form = new view.ManagerRecipesFormView(view, listaProductos);
         
         form.addGuardarListener(e -> {
             try {

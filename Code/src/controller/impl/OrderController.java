@@ -5,9 +5,10 @@ import model.dao.ProductDAO;
 import model.entities.Order;
 import model.entities.Product;
 import util.SessionController;
-import view.impl.OrderFormView;
-import view.impl.OrderListView;
-import view.impl.OrderDetailView; 
+import view.OrderDetailView;
+import view.OrderFormView;
+import view.OrderListView;
+
 import javax.swing.JOptionPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
